@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [ -n "$1" ]; then
+	echo 'Введи пароль: '
+	sudo true
+	sudo virt-viewer "$1" &
+	exit 0
+fi
+
+sudo virsh list | tail -n +3 | tac | tail -n +2 | awk '{print $2}' | cat -n | tee "/tmp/virshlist.$$"
+
+echo -n "Подключиться к: "
+read number
+if [ "$number" = "0" -o ! -n "$number" ]; then
+	exit 0
+else
+	name="$(cat /tmp/virshlist.$$ | head -$number | tail -1 | awk '{print $2}')"
+	sudo virt-viewer "$name" & 
+	rm -f "/tmp/virshlist.$$"
+fi
+exit 0
