@@ -1,0 +1,8 @@
+#!/bin/bash
+
+sudo virsh list | grep аб | awk '{print $2}' | cat -n | tee /tmp/vkill.$$
+echo -n 'Убить: '
+read NUM
+NAME="$(head -$NUM /tmp/vkill.$$ | tail -1 | awk '{print $2}')"
+sudo rm -f /tmp/vkill.$$
+sudo virsh destroy $NAME
