@@ -1,0 +1,23 @@
+#!/bin/bash
+
+info_by_mac() {
+	echo -n "$1 "
+	link="$(ip -o link | grep ${1:6} | awk '{print $2}' | tr -d ':')"
+	echo -n "$link "
+	if brctl showmacs br0 | grep -w yes | grep -q ${1:6}; then
+		echo br0
+	elif brctl showmacs br1 | grep -w yes | grep -qw ${1:6}; then
+		echo br1
+	else
+		echo not in bridge
+	fi
+}
+
+if [ "$#" -le 0 ]; then
+	echo "Usage: $0 <mac1> <mac2> <mac3> ... <macN>"
+fi
+
+while [ "$#" -ne 0 ]; do
+	info_by_mac ${1:6}
+	shift
+done
